@@ -36,11 +36,15 @@ st.markdown("""
     <style>
     /* CSS Reset and Root Variables */
     :root {
-        --primary-color: #00ff00;
+        --primary-color: #00ff88;
         --secondary-color: #00ffff;
         --accent-color: #ff9900;
+        --accent-color-2: #ff3366;
         --background-dark: #0E1117;
         --text-light: #ffffff;
+        --text-highlight: #ffff00;
+        --gradient-1: linear-gradient(135deg, #00ff88 0%, #00ffff 100%);
+        --gradient-2: linear-gradient(135deg, #ff9900 0%, #ff3366 100%);
         --spacing-unit: clamp(0.5rem, 2vw, 1.5rem);
         --container-padding: clamp(1rem, 3vw, 2rem);
         --metric-padding: clamp(0.75rem, 2vw, 1.5rem);
@@ -49,6 +53,7 @@ st.markdown("""
         --fluid-text-lg: clamp(1.25rem, 2vw + 0.5rem, 1.5rem);
         --fluid-text-xl: clamp(1.5rem, 2.5vw + 0.5rem, 2rem);
         --fluid-text-2xl: clamp(2rem, 3vw + 1rem, 3rem);
+        --glow-strength: 0 0 20px;
     }
 
     /* Container Layout */
@@ -58,6 +63,7 @@ st.markdown("""
         padding: var(--container-padding);
         color: var(--text-light);
         max-width: 100%;
+        background: var(--background-dark);
     }
 
     /* Responsive Grid Layout */
@@ -74,66 +80,82 @@ st.markdown("""
 
     /* Metric Cards */
     .stMetric {
-        container-type: inline-size;
-        container-name: metric;
-        background-color: rgba(0, 0, 0, 0.5) !important;
+        background: linear-gradient(145deg, rgba(0,0,0,0.6), rgba(0,0,0,0.8)) !important;
         padding: var(--metric-padding) !important;
-        border-radius: 0.5rem !important;
-        box-shadow: 0 4px 8px rgba(0,0,0,0.3) !important;
-        border: 1px solid rgba(255,255,255,0.1) !important;
-        transition: transform 0.2s ease-in-out;
+        border-radius: 1rem !important;
+        box-shadow: 0 8px 32px rgba(0,255,255,0.1) !important;
+        border: 2px solid rgba(0,255,255,0.2) !important;
+        transition: all 0.3s ease-in-out !important;
+        backdrop-filter: blur(8px) !important;
     }
 
     .stMetric:hover {
-        transform: translateY(-2px);
+        transform: translateY(-5px);
+        border-color: var(--primary-color) !important;
+        box-shadow: 0 12px 40px rgba(0,255,255,0.2) !important;
     }
 
     /* Metric Typography */
     .stMetric label {
-        color: var(--primary-color) !important;
-        font-size: var(--fluid-text-base) !important;
-        font-weight: 600 !important;
-        margin-bottom: 0.5rem !important;
-        text-shadow: 0 0 10px rgba(0,255,0,0.3) !important;
+        background: var(--gradient-1);
+        -webkit-background-clip: text !important;
+        -webkit-text-fill-color: transparent !important;
+        font-size: var(--fluid-text-lg) !important;
+        font-weight: 700 !important;
+        margin-bottom: 0.75rem !important;
+        text-shadow: var(--glow-strength) rgba(0,255,136,0.3) !important;
+        letter-spacing: 0.5px !important;
     }
 
     .stMetric [data-testid="stMetricValue"] {
         color: var(--text-light) !important;
         font-size: var(--fluid-text-xl) !important;
-        font-weight: bold !important;
-        text-shadow: 0 0 10px rgba(255,255,255,0.5) !important;
+        font-weight: 800 !important;
+        text-shadow: var(--glow-strength) rgba(255,255,255,0.5) !important;
         line-height: 1.2;
+        background: var(--gradient-2);
+        -webkit-background-clip: text !important;
+        -webkit-text-fill-color: transparent !important;
     }
 
     .stMetric [data-testid="stMetricDelta"] {
-        color: var(--secondary-color) !important;
-        font-size: var(--fluid-text-sm) !important;
-        font-weight: 500 !important;
-        margin-top: 0.3rem !important;
+        background: var(--gradient-1);
+        -webkit-background-clip: text !important;
+        -webkit-text-fill-color: transparent !important;
+        font-size: var(--fluid-text-base) !important;
+        font-weight: 600 !important;
+        margin-top: 0.5rem !important;
+        text-shadow: var(--glow-strength) rgba(0,255,255,0.3) !important;
     }
 
     /* Typography Scale */
     h1 {
+        background: var(--gradient-1);
+        -webkit-background-clip: text !important;
+        -webkit-text-fill-color: transparent !important;
         font-size: var(--fluid-text-2xl) !important;
-        color: var(--primary-color) !important;
-        font-weight: bold !important;
-        text-shadow: 0 0 15px rgba(0,255,0,0.3) !important;
+        font-weight: 800 !important;
+        text-shadow: var(--glow-strength) rgba(0,255,136,0.4) !important;
         margin-bottom: var(--spacing-unit) !important;
+        letter-spacing: 1px !important;
     }
 
     h2, h3 {
+        background: var(--gradient-2);
+        -webkit-background-clip: text !important;
+        -webkit-text-fill-color: transparent !important;
         font-size: var(--fluid-text-xl) !important;
-        color: var(--secondary-color) !important;
-        font-weight: bold !important;
-        text-shadow: 0 0 10px rgba(0,255,255,0.3) !important;
+        font-weight: 700 !important;
+        text-shadow: var(--glow-strength) rgba(255,51,102,0.3) !important;
         margin-bottom: calc(var(--spacing-unit) * 0.75) !important;
     }
 
     h4, h5, h6 {
-        font-size: var(--fluid-text-lg) !important;
         color: var(--accent-color) !important;
-        font-weight: bold !important;
+        font-size: var(--fluid-text-lg) !important;
+        font-weight: 700 !important;
         margin-bottom: calc(var(--spacing-unit) * 0.5) !important;
+        text-shadow: var(--glow-strength) rgba(255,153,0,0.3) !important;
     }
 
     p, label {
@@ -144,42 +166,60 @@ st.markdown("""
 
     /* Interactive Elements */
     .stSelectbox > div > div {
-        background-color: rgba(0, 0, 0, 0.5) !important;
-        border: 1px solid rgba(0, 255, 0, 0.3) !important;
-        color: var(--primary-color) !important;
+        background: linear-gradient(145deg, rgba(0,0,0,0.6), rgba(0,0,0,0.8)) !important;
+        border: 2px solid var(--primary-color) !important;
+        border-radius: 0.75rem !important;
+        color: var(--text-light) !important;
         font-size: var(--fluid-text-base) !important;
-        padding: calc(var(--spacing-unit) * 0.5) !important;
+        padding: calc(var(--spacing-unit) * 0.75) !important;
+        box-shadow: 0 4px 20px rgba(0,255,136,0.1) !important;
+        transition: all 0.3s ease !important;
     }
 
+    .stSelectbox > div > div:hover {
+        border-color: var(--secondary-color) !important;
+        box-shadow: 0 8px 32px rgba(0,255,255,0.2) !important;
+    }
+
+    /* File Uploader */
     .stFileUploader {
-        background-color: rgba(0, 0, 0, 0.5) !important;
+        background: linear-gradient(145deg, rgba(0,0,0,0.6), rgba(0,0,0,0.8)) !important;
         border: 2px dashed var(--primary-color) !important;
+        border-radius: 1rem !important;
         padding: var(--spacing-unit) !important;
-        border-radius: 0.5rem !important;
-        transition: border-color 0.2s ease;
+        transition: all 0.3s ease !important;
+        box-shadow: 0 4px 20px rgba(0,255,136,0.1) !important;
     }
 
     .stFileUploader:hover {
         border-color: var(--secondary-color) !important;
+        box-shadow: 0 8px 32px rgba(0,255,255,0.2) !important;
+        transform: translateY(-2px);
     }
 
     /* Data Display */
     .stDataFrame {
-        container-type: inline-size;
-        background-color: rgba(0, 0, 0, 0.5) !important;
-        border-radius: 0.5rem;
-        overflow: auto;
+        background: linear-gradient(145deg, rgba(0,0,0,0.6), rgba(0,0,0,0.8)) !important;
+        border-radius: 1rem !important;
+        overflow: hidden !important;
+        border: 2px solid rgba(0,255,255,0.2) !important;
+        box-shadow: 0 8px 32px rgba(0,255,255,0.1) !important;
     }
 
     .dataframe {
         color: var(--text-light) !important;
-        font-size: var(--fluid-text-sm) !important;
+        font-size: var(--fluid-text-base) !important;
     }
 
     /* Charts and Visualizations */
     .js-plotly-plot {
         container-type: inline-size;
         width: 100% !important;
+        background: linear-gradient(145deg, rgba(0,0,0,0.6), rgba(0,0,0,0.8)) !important;
+        border-radius: 1rem !important;
+        padding: 1rem !important;
+        border: 2px solid rgba(0,255,255,0.2) !important;
+        box-shadow: 0 8px 32px rgba(0,255,255,0.1) !important;
     }
 
     @container (max-width: 480px) {
@@ -191,13 +231,14 @@ st.markdown("""
 
     /* Warning Messages */
     .stAlert {
-        background-color: rgba(255, 193, 7, 0.2) !important;
-        color: #ffd700 !important;
-        border: 1px solid rgba(255, 193, 7, 0.5) !important;
+        background: linear-gradient(145deg, rgba(255,153,0,0.1), rgba(255,51,102,0.1)) !important;
+        color: var(--text-highlight) !important;
+        border: 2px solid var(--accent-color) !important;
+        border-radius: 1rem !important;
         padding: var(--spacing-unit) !important;
-        border-radius: 0.5rem !important;
         font-size: var(--fluid-text-base) !important;
         margin: var(--spacing-unit) 0 !important;
+        box-shadow: 0 4px 20px rgba(255,153,0,0.1) !important;
     }
 
     /* Mobile-First Media Queries */
@@ -219,11 +260,12 @@ st.markdown("""
 
     /* Dark Theme Overrides */
     [data-testid="stAppViewContainer"] {
-        background-color: var(--background-dark) !important;
+        background: var(--background-dark) !important;
     }
 
     [data-testid="stHeader"] {
-        background-color: rgba(0, 0, 0, 0.3) !important;
+        background: linear-gradient(145deg, rgba(0,0,0,0.8), rgba(0,0,0,0.9)) !important;
+        border-bottom: 2px solid rgba(0,255,255,0.1) !important;
     }
 
     /* Print Media Query */
@@ -237,6 +279,26 @@ st.markdown("""
             break-inside: avoid;
             page-break-inside: avoid;
         }
+    }
+
+    /* Scrollbar Styling */
+    ::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+        background: rgba(0,0,0,0.3);
+        border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb {
+        background: var(--gradient-1);
+        border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+        background: var(--gradient-2);
     }
     </style>
 """, unsafe_allow_html=True)
