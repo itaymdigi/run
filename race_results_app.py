@@ -23,35 +23,128 @@ from plotly.subplots import make_subplots
 import platform
 import os
 
-# Set page config
+# Set page config with dark theme
 st.set_page_config(
     page_title="Race Results Analyzer",
     page_icon="🏃",
-    layout="wide"
+    layout="wide",
+    initial_sidebar_state="expanded"
 )
 
-# Custom CSS with improved styling
+# Custom CSS with improved styling and contrast
 st.markdown("""
     <style>
+    /* Main container styling */
     .main {
         padding: 2rem;
+        color: #FFFFFF;
     }
+    
+    /* Metric styling */
     .stMetric {
-        background-color: #f0f2f6;
+        background-color: rgba(255, 255, 255, 0.1) !important;
         padding: 1rem;
         border-radius: 0.5rem;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        color: #FFFFFF !important;
     }
-    .metric-row {
-        display: flex;
-        justify-content: space-between;
-        margin-bottom: 1rem;
+    
+    .stMetric label {
+        color: #FFFFFF !important;
     }
+    
+    .stMetric .metric-value {
+        color: #FFFFFF !important;
+        font-weight: bold !important;
+    }
+    
+    /* Chart container styling */
     .chart-container {
-        background: white;
+        background: rgba(255, 255, 255, 0.05);
         padding: 1rem;
         border-radius: 0.5rem;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        margin: 1rem 0;
+    }
+    
+    /* Table styling */
+    .stDataFrame {
+        background-color: rgba(255, 255, 255, 0.05) !important;
+    }
+    
+    .dataframe {
+        color: #FFFFFF !important;
+    }
+    
+    /* Headers and text */
+    h1, h2, h3, h4, h5, h6 {
+        color: #FFFFFF !important;
+    }
+    
+    p, label, .stSelectbox label {
+        color: #FFFFFF !important;
+    }
+    
+    /* Button styling */
+    .stButton button {
+        background-color: #4CAF50 !important;
+        color: white !important;
+        border: none !important;
+        padding: 0.5rem 1rem !important;
+        border-radius: 0.3rem !important;
+        font-weight: 500 !important;
+    }
+    
+    .stButton button:hover {
+        background-color: #45a049 !important;
+    }
+    
+    /* Warning messages */
+    .stAlert {
+        background-color: rgba(255, 193, 7, 0.1) !important;
+        color: #ffc107 !important;
+    }
+    
+    /* Error messages */
+    .stException {
+        background-color: rgba(220, 53, 69, 0.1) !important;
+        color: #dc3545 !important;
+    }
+    
+    /* Selectbox styling */
+    .stSelectbox > div > div {
+        background-color: rgba(255, 255, 255, 0.1) !important;
+        color: #FFFFFF !important;
+    }
+    
+    /* File uploader styling */
+    .stFileUploader {
+        background-color: rgba(255, 255, 255, 0.1) !important;
+        padding: 1rem !important;
+        border-radius: 0.5rem !important;
+        border: 2px dashed rgba(255, 255, 255, 0.2) !important;
+    }
+    
+    /* Plotly chart background */
+    .js-plotly-plot .plotly {
+        background-color: rgba(255, 255, 255, 0.05) !important;
+    }
+    
+    /* Dark theme overrides */
+    [data-testid="stAppViewContainer"] {
+        background-color: #0E1117 !important;
+    }
+    
+    [data-testid="stHeader"] {
+        background-color: rgba(255, 255, 255, 0.1) !important;
+    }
+    
+    [data-testid="stToolbar"] {
+        background-color: transparent !important;
+    }
+    
+    [data-testid="stDecoration"] {
+        background-image: none !important;
     }
     </style>
 """, unsafe_allow_html=True)
@@ -121,16 +214,20 @@ def setup_chrome_options():
     chrome_options.add_argument("--no-sandbox")
     chrome_options.add_argument("--disable-dev-shm-usage")
     
-    # Performance and compatibility options
+    # Memory and process limitations
+    chrome_options.add_argument("--disable-dev-tools")
+    chrome_options.add_argument("--no-zygote")
+    chrome_options.add_argument("--single-process")
     chrome_options.add_argument("--disable-gpu")
     chrome_options.add_argument("--disable-software-rasterizer")
     chrome_options.add_argument("--disable-features=NetworkService")
-    chrome_options.add_argument("--window-size=1920x1080")
-    chrome_options.add_argument("--disable-features=VizDisplayCompositor")
     
-    # Additional options for stability
-    chrome_options.add_argument("--remote-debugging-port=9222")
-    chrome_options.add_argument("--disable-extensions")
+    # Resource limitations
+    chrome_options.add_argument("--memory-pressure-off")
+    chrome_options.add_argument("--disk-cache-size=1")
+    chrome_options.add_argument("--media-cache-size=1")
+    chrome_options.add_argument("--disk-cache-dir=/dev/null")
+    chrome_options.add_argument("--window-size=1920x1080")
     
     return chrome_options
 
@@ -142,15 +239,28 @@ def get_chrome_driver():
         if os.getenv('STREAMLIT_SHARING_MODE') == 'streamlit':
             # We're on Streamlit Cloud - use system chromium-driver
             chrome_service = Service('/usr/bin/chromedriver')
-            driver = webdriver.Chrome(service=chrome_service, options=chrome_options)
+            
+            # Set environment variables for Chrome
+            os.environ['CHROMIUM_FLAGS'] = '--disable-gpu --no-sandbox --disable-dev-shm-usage'
+            
+            # Create driver with retry mechanism
+            max_retries = 3
+            for attempt in range(max_retries):
+                try:
+                    driver = webdriver.Chrome(service=chrome_service, options=chrome_options)
+                    return driver
+                except Exception as e:
+                    if attempt == max_retries - 1:
+                        raise e
+                    time.sleep(1)  # Wait before retrying
         else:
             # We're running locally - use webdriver_manager
             driver = webdriver.Chrome(
                 service=Service(ChromeDriverManager(chrome_type=ChromeType.CHROMIUM).install()),
                 options=chrome_options
             )
-        
-        return driver
+            return driver
+            
     except Exception as e:
         st.error(f"Error setting up Chrome driver: {str(e)}")
         if os.getenv('STREAMLIT_SHARING_MODE') == 'streamlit':
@@ -267,7 +377,7 @@ def create_performance_dashboard(df_distance, stats):
         st.warning("Could not parse some dates. Charts may show dates in original format.")
         df_distance['parsed_date'] = df_distance['תאריך']
     
-    # Create subplots
+    # Create subplots with dark theme
     fig = make_subplots(
         rows=2, cols=2,
         subplot_titles=('Time Progression', 'Position Progression', 
@@ -276,53 +386,76 @@ def create_performance_dashboard(df_distance, stats):
         horizontal_spacing=0.1
     )
     
-    # 1. Time Progression
-    fig.add_trace(
-        go.Scatter(x=df_distance['parsed_date'], 
-                  y=df_distance['time_seconds'],
-                  mode='lines+markers',
-                  name='Time'),
-        row=1, col=1
-    )
-    
-    # 2. Position Progression
-    fig.add_trace(
-        go.Scatter(x=df_distance['parsed_date'], 
-                  y=pd.to_numeric(df_distance['כללי'], errors='coerce'),
-                  mode='lines+markers',
-                  name='Position'),
-        row=1, col=2
-    )
-    
-    # 3. Time Distribution
-    fig.add_trace(
-        go.Histogram(x=df_distance['time_seconds'],
-                    nbinsx=10,
-                    name='Time Distribution'),
-        row=2, col=1
-    )
-    
-    # 4. Pace vs Position Scatter
-    fig.add_trace(
-        go.Scatter(x=pd.to_numeric(df_distance['כללי'], errors='coerce'),
-                  y=df_distance['time_seconds'],
-                  mode='markers',
-                  name='Pace vs Position',
-                  marker=dict(
-                      size=10,
-                      color=df_distance['time_seconds'],
-                      colorscale='Viridis',
-                      showscale=True
-                  )),
-        row=2, col=2
-    )
-    
-    # Update layout
+    # Update layout for dark theme
     fig.update_layout(
         height=800,
         showlegend=False,
         title_text="Performance Analysis Dashboard",
-        template="plotly_white"
+        template="plotly_dark",
+        paper_bgcolor='rgba(0,0,0,0)',
+        plot_bgcolor='rgba(0,0,0,0)',
+        font=dict(color='white'),
+    )
+    
+    # Update axes for all subplots
+    fig.update_xaxes(gridcolor='rgba(255,255,255,0.1)', zerolinecolor='rgba(255,255,255,0.1)')
+    fig.update_yaxes(gridcolor='rgba(255,255,255,0.1)', zerolinecolor='rgba(255,255,255,0.1)')
+    
+    # Add traces with improved visibility
+    fig.add_trace(
+        go.Scatter(
+            x=df_distance['parsed_date'],
+            y=df_distance['time_seconds'],
+            mode='lines+markers',
+            name='Time',
+            line=dict(color='#00ff00', width=2),
+            marker=dict(size=8)
+        ),
+        row=1, col=1
+    )
+    
+    fig.add_trace(
+        go.Scatter(
+            x=df_distance['parsed_date'],
+            y=pd.to_numeric(df_distance['כללי'], errors='coerce'),
+            mode='lines+markers',
+            name='Position',
+            line=dict(color='#ff9900', width=2),
+            marker=dict(size=8)
+        ),
+        row=1, col=2
+    )
+    
+    fig.add_trace(
+        go.Histogram(
+            x=df_distance['time_seconds'],
+            nbinsx=10,
+            name='Time Distribution',
+            marker_color='#00ffff'
+        ),
+        row=2, col=1
+    )
+    
+    fig.add_trace(
+        go.Scatter(
+            x=pd.to_numeric(df_distance['כללי'], errors='coerce'),
+            y=df_distance['time_seconds'],
+            mode='markers',
+            name='Pace vs Position',
+            marker=dict(
+                size=10,
+                color=df_distance['time_seconds'],
+                colorscale='Viridis',
+                showscale=True,
+                colorbar=dict(
+                    title='Time',
+                    titleside='right',
+                    titlefont=dict(color='white'),
+                    tickfont=dict(color='white')
+                )
+            )
+        ),
+        row=2, col=2
     )
     
     return fig
