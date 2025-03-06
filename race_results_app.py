@@ -115,28 +115,46 @@ def analyze_results(results, distance):
 def setup_chrome_options():
     """Setup chrome options for both local and cloud deployment"""
     chrome_options = Options()
-    chrome_options.add_argument("--no-sandbox")
+    
+    # Required options for cloud/headless environments
     chrome_options.add_argument("--headless=new")
+    chrome_options.add_argument("--no-sandbox")
     chrome_options.add_argument("--disable-dev-shm-usage")
+    
+    # Performance and compatibility options
     chrome_options.add_argument("--disable-gpu")
+    chrome_options.add_argument("--disable-software-rasterizer")
     chrome_options.add_argument("--disable-features=NetworkService")
     chrome_options.add_argument("--window-size=1920x1080")
     chrome_options.add_argument("--disable-features=VizDisplayCompositor")
+    
+    # Additional options for stability
+    chrome_options.add_argument("--remote-debugging-port=9222")
+    chrome_options.add_argument("--disable-extensions")
+    
     return chrome_options
 
 def get_chrome_driver():
     """Get Chrome driver based on environment"""
     try:
-        if os.getenv('STREAMLIT_SHARING_MODE') == 'streamlit':
-            # We're on Streamlit Cloud
-            chrome_service = Service('/usr/bin/chromedriver')
-        else:
-            # We're running locally
-            chrome_service = Service(ChromeDriverManager(chrome_type=ChromeType.CHROMIUM).install())
+        chrome_options = setup_chrome_options()
         
-        return webdriver.Chrome(service=chrome_service, options=setup_chrome_options())
+        if os.getenv('STREAMLIT_SHARING_MODE') == 'streamlit':
+            # We're on Streamlit Cloud - use system chromium-driver
+            chrome_service = Service('/usr/bin/chromedriver')
+            driver = webdriver.Chrome(service=chrome_service, options=chrome_options)
+        else:
+            # We're running locally - use webdriver_manager
+            driver = webdriver.Chrome(
+                service=Service(ChromeDriverManager(chrome_type=ChromeType.CHROMIUM).install()),
+                options=chrome_options
+            )
+        
+        return driver
     except Exception as e:
         st.error(f"Error setting up Chrome driver: {str(e)}")
+        if os.getenv('STREAMLIT_SHARING_MODE') == 'streamlit':
+            st.error("Additional info: Make sure chromium and chromium-driver are installed via packages.txt")
         return None
 
 def scrape_race_results(search_name):
