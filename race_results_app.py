@@ -40,11 +40,13 @@ st.markdown("""
         --secondary-color: #00ffff;
         --accent-color: #ff9900;
         --accent-color-2: #ff3366;
-        --background-dark: #0E1117;
+        --background-dark: #000000;
         --text-light: #ffffff;
         --text-highlight: #ffff00;
         --gradient-1: linear-gradient(135deg, #00ff88 0%, #00ffff 100%);
         --gradient-2: linear-gradient(135deg, #ff9900 0%, #ff3366 100%);
+        --gradient-3: linear-gradient(135deg, #ff0000 0%, #ff3366 100%);
+        --gradient-4: linear-gradient(135deg, #00ff88 0%, #00ffff 100%);
         --spacing-unit: clamp(0.5rem, 2vw, 1.5rem);
         --container-padding: clamp(1rem, 3vw, 2rem);
         --metric-padding: clamp(0.75rem, 2vw, 1.5rem);
@@ -80,11 +82,11 @@ st.markdown("""
 
     /* Metric Cards */
     .stMetric {
-        background: linear-gradient(145deg, rgba(0,0,0,0.6), rgba(0,0,0,0.8)) !important;
+        background: linear-gradient(145deg, rgba(0,255,136,0.1), rgba(0,255,255,0.1)) !important;
         padding: var(--metric-padding) !important;
         border-radius: 1rem !important;
-        box-shadow: 0 8px 32px rgba(0,255,255,0.1) !important;
-        border: 2px solid rgba(0,255,255,0.2) !important;
+        box-shadow: 0 8px 32px rgba(0,255,255,0.2) !important;
+        border: 2px solid rgba(0,255,255,0.3) !important;
         transition: all 0.3s ease-in-out !important;
         backdrop-filter: blur(8px) !important;
     }
@@ -92,7 +94,8 @@ st.markdown("""
     .stMetric:hover {
         transform: translateY(-5px);
         border-color: var(--primary-color) !important;
-        box-shadow: 0 12px 40px rgba(0,255,255,0.2) !important;
+        box-shadow: 0 12px 40px rgba(0,255,255,0.4) !important;
+        background: linear-gradient(145deg, rgba(0,255,136,0.2), rgba(0,255,255,0.2)) !important;
     }
 
     /* Metric Typography */
@@ -166,14 +169,13 @@ st.markdown("""
 
     /* Interactive Elements */
     .stSelectbox > div > div {
-        background: linear-gradient(145deg, rgba(0,0,0,0.6), rgba(0,0,0,0.8)) !important;
+        background: linear-gradient(145deg, rgba(0,255,136,0.1), rgba(0,255,255,0.1)) !important;
         border: 2px solid var(--primary-color) !important;
         border-radius: 0.75rem !important;
         color: var(--text-light) !important;
         font-size: var(--fluid-text-base) !important;
         padding: calc(var(--spacing-unit) * 0.75) !important;
-        box-shadow: 0 4px 20px rgba(0,255,136,0.1) !important;
-        transition: all 0.3s ease !important;
+        box-shadow: 0 4px 20px rgba(0,255,136,0.2) !important;
     }
 
     .stSelectbox > div > div:hover {
@@ -183,12 +185,11 @@ st.markdown("""
 
     /* File Uploader */
     .stFileUploader {
-        background: linear-gradient(145deg, rgba(0,0,0,0.6), rgba(0,0,0,0.8)) !important;
+        background: linear-gradient(145deg, rgba(0,255,136,0.1), rgba(0,255,255,0.1)) !important;
         border: 2px dashed var(--primary-color) !important;
         border-radius: 1rem !important;
         padding: var(--spacing-unit) !important;
-        transition: all 0.3s ease !important;
-        box-shadow: 0 4px 20px rgba(0,255,136,0.1) !important;
+        box-shadow: 0 4px 20px rgba(0,255,136,0.2) !important;
     }
 
     .stFileUploader:hover {
@@ -199,11 +200,11 @@ st.markdown("""
 
     /* Data Display */
     .stDataFrame {
-        background: linear-gradient(145deg, rgba(0,0,0,0.6), rgba(0,0,0,0.8)) !important;
+        background: linear-gradient(145deg, rgba(0,255,136,0.1), rgba(0,255,255,0.1)) !important;
         border-radius: 1rem !important;
         overflow: hidden !important;
-        border: 2px solid rgba(0,255,255,0.2) !important;
-        box-shadow: 0 8px 32px rgba(0,255,255,0.1) !important;
+        border: 2px solid rgba(0,255,255,0.3) !important;
+        box-shadow: 0 8px 32px rgba(0,255,255,0.2) !important;
     }
 
     .dataframe {
@@ -213,13 +214,11 @@ st.markdown("""
 
     /* Charts and Visualizations */
     .js-plotly-plot {
-        container-type: inline-size;
-        width: 100% !important;
-        background: linear-gradient(145deg, rgba(0,0,0,0.6), rgba(0,0,0,0.8)) !important;
+        background: linear-gradient(145deg, rgba(0,255,136,0.1), rgba(0,255,255,0.1)) !important;
         border-radius: 1rem !important;
         padding: 1rem !important;
-        border: 2px solid rgba(0,255,255,0.2) !important;
-        box-shadow: 0 8px 32px rgba(0,255,255,0.1) !important;
+        border: 2px solid rgba(0,255,255,0.3) !important;
+        box-shadow: 0 8px 32px rgba(0,255,255,0.2) !important;
     }
 
     @container (max-width: 480px) {
@@ -231,14 +230,14 @@ st.markdown("""
 
     /* Warning Messages */
     .stAlert {
-        background: linear-gradient(145deg, rgba(255,153,0,0.1), rgba(255,51,102,0.1)) !important;
+        background: linear-gradient(145deg, rgba(255,153,0,0.2), rgba(255,51,102,0.2)) !important;
         color: var(--text-highlight) !important;
         border: 2px solid var(--accent-color) !important;
         border-radius: 1rem !important;
         padding: var(--spacing-unit) !important;
         font-size: var(--fluid-text-base) !important;
         margin: var(--spacing-unit) 0 !important;
-        box-shadow: 0 4px 20px rgba(255,153,0,0.1) !important;
+        box-shadow: 0 4px 20px rgba(255,153,0,0.2) !important;
     }
 
     /* Mobile-First Media Queries */
@@ -264,8 +263,8 @@ st.markdown("""
     }
 
     [data-testid="stHeader"] {
-        background: linear-gradient(145deg, rgba(0,0,0,0.8), rgba(0,0,0,0.9)) !important;
-        border-bottom: 2px solid rgba(0,255,255,0.1) !important;
+        background: linear-gradient(145deg, rgba(0,255,136,0.1), rgba(0,255,255,0.1)) !important;
+        border-bottom: 2px solid rgba(0,255,255,0.2) !important;
     }
 
     /* Print Media Query */
@@ -299,6 +298,61 @@ st.markdown("""
 
     ::-webkit-scrollbar-thumb:hover {
         background: var(--gradient-2);
+    }
+
+    /* Table Styling */
+    .stTable {
+        background: linear-gradient(145deg, rgba(0,255,136,0.1), rgba(0,255,255,0.1)) !important;
+        border-radius: 1rem !important;
+        overflow: hidden !important;
+        border: 2px solid rgba(0,255,255,0.3) !important;
+    }
+
+    .stTable th {
+        background: var(--gradient-1) !important;
+        color: var(--background-dark) !important;
+        font-weight: 600 !important;
+        padding: 1rem !important;
+    }
+
+    .stTable td {
+        color: var(--text-light) !important;
+        border-bottom: 1px solid rgba(255,255,255,0.2) !important;
+        padding: 0.75rem !important;
+    }
+
+    /* Text Input Styling */
+    .stTextInput > div > div > input {
+        background: linear-gradient(145deg, rgba(0,255,136,0.1), rgba(0,255,255,0.1)) !important;
+        border: 2px solid var(--primary-color) !important;
+        border-radius: 0.75rem !important;
+        color: var(--text-light) !important;
+        padding: 0.75rem !important;
+        box-shadow: 0 4px 20px rgba(0,255,136,0.2) !important;
+    }
+
+    .stTextInput > div > div > input:focus {
+        border-color: var(--secondary-color) !important;
+        box-shadow: 0 8px 32px rgba(0,255,255,0.3) !important;
+        background: linear-gradient(145deg, rgba(0,255,136,0.2), rgba(0,255,255,0.2)) !important;
+    }
+
+    /* Button Styling */
+    .stButton > button {
+        background: var(--gradient-1) !important;
+        color: var(--background-dark) !important;
+        border: none !important;
+        border-radius: 0.75rem !important;
+        padding: 0.75rem 1.5rem !important;
+        font-weight: 600 !important;
+        transition: all 0.3s ease !important;
+        box-shadow: 0 4px 20px rgba(0,255,136,0.3) !important;
+    }
+
+    .stButton > button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 32px rgba(0,255,255,0.4) !important;
+        background: var(--gradient-4) !important;
     }
     </style>
 """, unsafe_allow_html=True)
