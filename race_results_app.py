@@ -42,92 +42,102 @@ st.markdown("""
     
     /* Metric styling */
     .stMetric {
-        background-color: rgba(255, 255, 255, 0.1) !important;
-        padding: 1rem;
-        border-radius: 0.5rem;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-        color: #FFFFFF !important;
+        background-color: rgba(0, 0, 0, 0.5) !important;
+        padding: 1.5rem !important;
+        border-radius: 0.5rem !important;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.3) !important;
+        border: 1px solid rgba(255,255,255,0.1) !important;
     }
     
+    /* Metric label styling */
     .stMetric label {
-        color: #FFFFFF !important;
+        color: #00ff00 !important;
+        font-size: 1.1rem !important;
+        font-weight: 600 !important;
+        margin-bottom: 0.5rem !important;
+        text-shadow: 0 0 10px rgba(0,255,0,0.3) !important;
     }
     
-    .stMetric .metric-value {
-        color: #FFFFFF !important;
+    /* Metric value styling */
+    .stMetric [data-testid="stMetricValue"] {
+        color: #ffffff !important;
+        font-size: 1.8rem !important;
         font-weight: bold !important;
+        text-shadow: 0 0 10px rgba(255,255,255,0.5) !important;
     }
     
-    /* Chart container styling */
-    .chart-container {
-        background: rgba(255, 255, 255, 0.05);
-        padding: 1rem;
-        border-radius: 0.5rem;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-        margin: 1rem 0;
-    }
-    
-    /* Table styling */
-    .stDataFrame {
-        background-color: rgba(255, 255, 255, 0.05) !important;
-    }
-    
-    .dataframe {
-        color: #FFFFFF !important;
+    /* Metric delta styling */
+    .stMetric [data-testid="stMetricDelta"] {
+        color: #00ffff !important;
+        font-size: 1rem !important;
+        font-weight: 500 !important;
+        margin-top: 0.3rem !important;
     }
     
     /* Headers and text */
-    h1, h2, h3, h4, h5, h6 {
-        color: #FFFFFF !important;
+    h1 {
+        color: #00ff00 !important;
+        font-size: 2.5rem !important;
+        font-weight: bold !important;
+        text-shadow: 0 0 15px rgba(0,255,0,0.3) !important;
     }
     
-    p, label, .stSelectbox label {
-        color: #FFFFFF !important;
+    h2, h3 {
+        color: #00ffff !important;
+        font-weight: bold !important;
+        text-shadow: 0 0 10px rgba(0,255,255,0.3) !important;
     }
     
-    /* Button styling */
-    .stButton button {
-        background-color: #4CAF50 !important;
-        color: white !important;
-        border: none !important;
-        padding: 0.5rem 1rem !important;
-        border-radius: 0.3rem !important;
-        font-weight: 500 !important;
+    h4, h5, h6 {
+        color: #ff9900 !important;
+        font-weight: bold !important;
     }
     
-    .stButton button:hover {
-        background-color: #45a049 !important;
-    }
-    
-    /* Warning messages */
-    .stAlert {
-        background-color: rgba(255, 193, 7, 0.1) !important;
-        color: #ffc107 !important;
-    }
-    
-    /* Error messages */
-    .stException {
-        background-color: rgba(220, 53, 69, 0.1) !important;
-        color: #dc3545 !important;
+    p, label {
+        color: #ffffff !important;
+        font-size: 1.1rem !important;
     }
     
     /* Selectbox styling */
     .stSelectbox > div > div {
-        background-color: rgba(255, 255, 255, 0.1) !important;
-        color: #FFFFFF !important;
+        background-color: rgba(0, 0, 0, 0.5) !important;
+        border: 1px solid rgba(0, 255, 0, 0.3) !important;
+        color: #00ff00 !important;
+        font-weight: 500 !important;
+    }
+    
+    .stSelectbox label {
+        color: #00ff00 !important;
+        font-weight: 600 !important;
+        font-size: 1.1rem !important;
+    }
+    
+    /* Warning messages with improved visibility */
+    .stAlert {
+        background-color: rgba(255, 193, 7, 0.2) !important;
+        color: #ffd700 !important;
+        border: 1px solid rgba(255, 193, 7, 0.5) !important;
+        padding: 1rem !important;
+        border-radius: 0.5rem !important;
+        font-weight: 500 !important;
     }
     
     /* File uploader styling */
     .stFileUploader {
-        background-color: rgba(255, 255, 255, 0.1) !important;
+        background-color: rgba(0, 0, 0, 0.5) !important;
+        border: 2px dashed #00ff00 !important;
         padding: 1rem !important;
         border-radius: 0.5rem !important;
-        border: 2px dashed rgba(255, 255, 255, 0.2) !important;
     }
     
-    /* Plotly chart background */
-    .js-plotly-plot .plotly {
-        background-color: rgba(255, 255, 255, 0.05) !important;
+    /* Table styling */
+    .stDataFrame {
+        background-color: rgba(0, 0, 0, 0.5) !important;
+    }
+    
+    .dataframe {
+        color: #ffffff !important;
+        font-size: 1rem !important;
     }
     
     /* Dark theme overrides */
@@ -136,15 +146,7 @@ st.markdown("""
     }
     
     [data-testid="stHeader"] {
-        background-color: rgba(255, 255, 255, 0.1) !important;
-    }
-    
-    [data-testid="stToolbar"] {
-        background-color: transparent !important;
-    }
-    
-    [data-testid="stDecoration"] {
-        background-image: none !important;
+        background-color: rgba(0, 0, 0, 0.3) !important;
     }
     </style>
 """, unsafe_allow_html=True)
@@ -484,6 +486,27 @@ def parallel_scrape_results(runner_names):
                 st.error(f"Error scraping results for {name}: {str(e)}")
     return results
 
+def format_time(seconds):
+    """Format seconds into a readable time string"""
+    if seconds == float('inf'):
+        return "N/A"
+    
+    hours = int(seconds // 3600)
+    minutes = int((seconds % 3600) // 60)
+    secs = seconds % 60
+    
+    if hours > 0:
+        return f"{hours:02d}:{minutes:02d}:{secs:02.0f}"
+    else:
+        return f"{minutes:02d}:{secs:02.0f}"
+
+def format_improvement_rate(rate):
+    """Format improvement rate with proper sign and color"""
+    if rate > 0:
+        return f"↑ {abs(rate):.1f}% Improving"
+    else:
+        return f"↓ {abs(rate):.1f}% Declining"
+
 def main():
     st.title("🏃 Advanced Race Results Analyzer")
     st.write("Upload a file with runner names or enter names directly for comprehensive race analysis")
@@ -548,28 +571,28 @@ def main():
                     # Display metrics in columns
                     col1, col2, col3, col4 = st.columns(4)
                     with col1:
-                        st.metric("Best Time", analysis['best_time'])
+                        st.metric("🏃 Best Time", format_time(analysis['best_time']))
                     with col2:
-                        st.metric("Best Pace", analysis['best_pace'])
+                        st.metric("⚡ Best Pace", format_time(analysis['best_pace']))
                     with col3:
-                        st.metric("Total Races", analysis['total_races'])
+                        st.metric("🎯 Total Races", f"{analysis['total_races']}")
                     with col4:
                         consistency = advanced_stats['consistency_score']
-                        st.metric("Consistency Score", f"{consistency:.1f}%")
+                        st.metric("📊 Consistency Score", f"{consistency:.1f}%")
                     
                     # Additional metrics row
                     col1, col2, col3, col4 = st.columns(4)
                     with col1:
-                        st.metric("Best Position", advanced_stats['best_position'])
+                        st.metric("🏆 Best Position", f"#{advanced_stats['best_position']}")
                     with col2:
-                        st.metric("Average Position", f"{advanced_stats['avg_position']:.1f}")
+                        st.metric("📈 Average Position", f"#{advanced_stats['avg_position']:.0f}")
                     with col3:
                         improvement_rate = advanced_stats['improvement_rate']
-                        st.metric("Improvement Rate", 
+                        st.metric("💪 Improvement Rate", 
                                 f"{abs(improvement_rate):.1f}%",
-                                delta="Improving" if improvement_rate > 0 else "Declining")
+                                delta=("Improving" if improvement_rate > 0 else "Declining"))
                     with col4:
-                        st.metric("Standard Deviation", f"{advanced_stats['std_dev']:.1f}s")
+                        st.metric("📏 Standard Deviation", f"{advanced_stats['std_dev']:.1f}s")
                     
                     # Create and display performance dashboard
                     st.plotly_chart(create_performance_dashboard(df_distance, advanced_stats),
