@@ -8,7 +8,9 @@ from bs4 import BeautifulSoup
 import json
 import time
 from selenium.webdriver.chrome.options import Options
-import chromedriver_autoinstaller
+from selenium.webdriver.chrome.service import Service
+from webdriver_manager.chrome import ChromeDriverManager
+from webdriver_manager.core.os_manager import ChromeType
 from collections import defaultdict
 import io
 import plotly.express as px
@@ -114,7 +116,7 @@ def setup_chrome_options():
     """Setup chrome options for both local and cloud deployment"""
     chrome_options = Options()
     chrome_options.add_argument("--no-sandbox")
-    chrome_options.add_argument("--headless")
+    chrome_options.add_argument("--headless=new")
     chrome_options.add_argument("--disable-dev-shm-usage")
     chrome_options.add_argument("--disable-gpu")
     chrome_options.add_argument("--disable-features=NetworkService")
@@ -125,12 +127,14 @@ def setup_chrome_options():
 def get_chrome_driver():
     """Get Chrome driver based on environment"""
     try:
-        # First try using chromedriver_autoinstaller
-        if not st.session_state.get("chromedriver_installed"):
-            chromedriver_autoinstaller.install()
-            st.session_state.chromedriver_installed = True
+        if os.getenv('STREAMLIT_SHARING_MODE') == 'streamlit':
+            # We're on Streamlit Cloud
+            chrome_service = Service('/usr/bin/chromedriver')
+        else:
+            # We're running locally
+            chrome_service = Service(ChromeDriverManager(chrome_type=ChromeType.CHROMIUM).install())
         
-        return webdriver.Chrome(options=setup_chrome_options())
+        return webdriver.Chrome(service=chrome_service, options=setup_chrome_options())
     except Exception as e:
         st.error(f"Error setting up Chrome driver: {str(e)}")
         return None
