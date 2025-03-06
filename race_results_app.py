@@ -557,13 +557,25 @@ def calculate_advanced_stats(df_distance):
             
         # Calculate season bests with proper date parsing
         try:
-            # Convert Hebrew date format (DD/MM/YY) to datetime
-            df_distance['parsed_date'] = pd.to_datetime(df_distance['תאריך'], format='%d/%m/%y')
-            df_distance['year'] = df_distance['parsed_date'].dt.year
-            stats['season_bests'] = df_distance.groupby('year')['time_seconds'].min().to_dict()
+            # Try multiple date formats
+            df_distance['parsed_date'] = pd.to_datetime(df_distance['תאריך'], format='%d/%m/%y', errors='coerce')
+            
+            # Try alternative formats for failed dates
+            for fmt in ['%m/%d/%y', '%y/%m/%d', '%d-%m-%y', '%m-%d-%y']:
+                mask = df_distance['parsed_date'].isna()
+                if mask.any():
+                    df_distance.loc[mask, 'parsed_date'] = pd.to_datetime(
+                        df_distance.loc[mask, 'תאריך'], format=fmt, errors='coerce'
+                    )
+            
+            # Extract year for successfully parsed dates
+            df_distance['year'] = df_distance['parsed_date'].dt.year.fillna(0).astype(int)
+            
+            # Only include rows with valid years in season bests
+            valid_years = df_distance[df_distance['year'] > 0]
+            stats['season_bests'] = valid_years.groupby('year')['time_seconds'].min().to_dict()
         except Exception as e:
-            # Fallback if date parsing fails
-            st.warning(f"Could not parse some dates. Season bests may be incomplete.")
+            st.warning(f"Could not parse some dates. Season bests may be incomplete. Error: {str(e)}")
             stats['season_bests'] = {}
         
         # Calculate position improvements
@@ -580,9 +592,27 @@ def create_performance_dashboard(df_distance, stats):
     
     # Convert dates before creating plots
     try:
-        df_distance['parsed_date'] = pd.to_datetime(df_distance['תאריך'], format='%d/%m/%y')
+        # First try with the expected format
+        df_distance['parsed_date'] = pd.to_datetime(df_distance['תאריך'], format='%d/%m/%y', errors='coerce')
+        
+        # Check if we have any NaT (Not a Time) values, which indicate parsing failures
+        if df_distance['parsed_date'].isna().any():
+            # Try alternative formats
+            for fmt in ['%m/%d/%y', '%y/%m/%d', '%d-%m-%y', '%m-%d-%y']:
+                temp_dates = pd.to_datetime(df_distance['תאריך'], format=fmt, errors='coerce')
+                # Fill NaT values with successfully parsed dates from alternative format
+                df_distance.loc[df_distance['parsed_date'].isna(), 'parsed_date'] = temp_dates.loc[df_distance['parsed_date'].isna()]
+                
+                # If all dates are parsed, break the loop
+                if not df_distance['parsed_date'].isna().any():
+                    break
+        
+        # For any remaining NaT values, keep the original string
+        if df_distance['parsed_date'].isna().any():
+            st.warning("Could not parse some dates. Charts may show dates in original format.")
+            df_distance.loc[df_distance['parsed_date'].isna(), 'parsed_date'] = df_distance.loc[df_distance['parsed_date'].isna(), 'תאריך']
     except Exception as e:
-        st.warning("Could not parse some dates. Charts may show dates in original format.")
+        st.warning(f"Could not parse dates: {str(e)}. Charts will show dates in original format.")
         df_distance['parsed_date'] = df_distance['תאריך']
     
     # Create subplots with dark theme
