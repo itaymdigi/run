@@ -18,6 +18,8 @@ import numpy as np
 from concurrent.futures import ThreadPoolExecutor
 import statistics
 from plotly.subplots import make_subplots
+import platform
+import os
 
 # Set page config
 st.set_page_config(
@@ -108,21 +110,39 @@ def analyze_results(results, distance):
         st.error(f"Error analyzing results: {str(e)}")
         return None
 
-def scrape_race_results(search_name):
-    # Install ChromeDriver
-    chromedriver_autoinstaller.install()
-    
-    # Setup Chrome options
+def setup_chrome_options():
+    """Setup chrome options for both local and cloud deployment"""
     chrome_options = Options()
     chrome_options.add_argument("--no-sandbox")
-    chrome_options.add_argument("--disable-dev-shm-usage")
     chrome_options.add_argument("--headless")
-    chrome_options.add_argument("--log-level=3")  # Suppress console logs
-    
-    # Setup Chrome driver with options
-    driver = webdriver.Chrome(options=chrome_options)
-    
+    chrome_options.add_argument("--disable-dev-shm-usage")
+    chrome_options.add_argument("--disable-gpu")
+    chrome_options.add_argument("--disable-features=NetworkService")
+    chrome_options.add_argument("--window-size=1920x1080")
+    chrome_options.add_argument("--disable-features=VizDisplayCompositor")
+    return chrome_options
+
+def get_chrome_driver():
+    """Get Chrome driver based on environment"""
     try:
+        # First try using chromedriver_autoinstaller
+        if not st.session_state.get("chromedriver_installed"):
+            chromedriver_autoinstaller.install()
+            st.session_state.chromedriver_installed = True
+        
+        return webdriver.Chrome(options=setup_chrome_options())
+    except Exception as e:
+        st.error(f"Error setting up Chrome driver: {str(e)}")
+        return None
+
+def scrape_race_results(search_name):
+    """Scrape race results with improved error handling"""
+    driver = None
+    try:
+        driver = get_chrome_driver()
+        if driver is None:
+            return {"error": "Could not initialize Chrome driver"}
+        
         # Navigate to the website
         driver.get("https://raceview.net/")
         
@@ -137,8 +157,8 @@ def scrape_race_results(search_name):
         search_button = driver.find_element(By.ID, "btnSearch")
         search_button.click()
         
-        # Wait for results
-        time.sleep(2)
+        # Wait for results with increased timeout
+        time.sleep(3)
         
         # Parse results
         soup = BeautifulSoup(driver.page_source, 'html.parser')
@@ -170,7 +190,11 @@ def scrape_race_results(search_name):
         st.error(f"Error scraping results: {str(e)}")
         return {"error": str(e)}
     finally:
-        driver.quit()
+        if driver:
+            try:
+                driver.quit()
+            except:
+                pass
 
 def calculate_advanced_stats(df_distance):
     """Calculate advanced statistics for the runner's performance"""

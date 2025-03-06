@@ -1,1 +1,1 @@
-/sample_runners.txt
+# Python\n__pycache__/\n*.py[cod]\n*.class\nbuild/\ndist/\n*.egg-info/\n\n# Virtual Environment\nvenv/\nenv/\n.env\n.venv\n\n# IDE\n.vscode/\n.idea/\n*.swp\n*.swo\n\n# Project specific\n*.xlsx\n*.csv\nchromedriver*\ngeckodriver*\n*.pkl\n.streamlit/\nconfig.ini\nsecrets.yaml\n\n# Logs\n*.log\ndebug.log\ngeckodriver.log\n\n# OS\n.DS_Store\nThumbs.db
