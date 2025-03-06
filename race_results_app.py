@@ -31,122 +31,212 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# Custom CSS with improved styling and contrast
+# Custom CSS with improved responsive styling
 st.markdown("""
     <style>
-    /* Main container styling */
-    .main {
-        padding: 2rem;
-        color: #FFFFFF;
+    /* CSS Reset and Root Variables */
+    :root {
+        --primary-color: #00ff00;
+        --secondary-color: #00ffff;
+        --accent-color: #ff9900;
+        --background-dark: #0E1117;
+        --text-light: #ffffff;
+        --spacing-unit: clamp(0.5rem, 2vw, 1.5rem);
+        --container-padding: clamp(1rem, 3vw, 2rem);
+        --metric-padding: clamp(0.75rem, 2vw, 1.5rem);
+        --fluid-text-sm: clamp(0.875rem, 1vw + 0.5rem, 1rem);
+        --fluid-text-base: clamp(1rem, 1.5vw + 0.5rem, 1.25rem);
+        --fluid-text-lg: clamp(1.25rem, 2vw + 0.5rem, 1.5rem);
+        --fluid-text-xl: clamp(1.5rem, 2.5vw + 0.5rem, 2rem);
+        --fluid-text-2xl: clamp(2rem, 3vw + 1rem, 3rem);
     }
-    
-    /* Metric styling */
+
+    /* Container Layout */
+    .main {
+        container-type: inline-size;
+        container-name: main;
+        padding: var(--container-padding);
+        color: var(--text-light);
+        max-width: 100%;
+    }
+
+    /* Responsive Grid Layout */
+    .stColumns {
+        display: grid !important;
+        gap: var(--spacing-unit);
+    }
+
+    @container main (min-width: 768px) {
+        .stColumns {
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        }
+    }
+
+    /* Metric Cards */
     .stMetric {
+        container-type: inline-size;
+        container-name: metric;
         background-color: rgba(0, 0, 0, 0.5) !important;
-        padding: 1.5rem !important;
+        padding: var(--metric-padding) !important;
         border-radius: 0.5rem !important;
         box-shadow: 0 4px 8px rgba(0,0,0,0.3) !important;
         border: 1px solid rgba(255,255,255,0.1) !important;
+        transition: transform 0.2s ease-in-out;
     }
-    
-    /* Metric label styling */
+
+    .stMetric:hover {
+        transform: translateY(-2px);
+    }
+
+    /* Metric Typography */
     .stMetric label {
-        color: #00ff00 !important;
-        font-size: 1.1rem !important;
+        color: var(--primary-color) !important;
+        font-size: var(--fluid-text-base) !important;
         font-weight: 600 !important;
         margin-bottom: 0.5rem !important;
         text-shadow: 0 0 10px rgba(0,255,0,0.3) !important;
     }
-    
-    /* Metric value styling */
+
     .stMetric [data-testid="stMetricValue"] {
-        color: #ffffff !important;
-        font-size: 1.8rem !important;
+        color: var(--text-light) !important;
+        font-size: var(--fluid-text-xl) !important;
         font-weight: bold !important;
         text-shadow: 0 0 10px rgba(255,255,255,0.5) !important;
+        line-height: 1.2;
     }
-    
-    /* Metric delta styling */
+
     .stMetric [data-testid="stMetricDelta"] {
-        color: #00ffff !important;
-        font-size: 1rem !important;
+        color: var(--secondary-color) !important;
+        font-size: var(--fluid-text-sm) !important;
         font-weight: 500 !important;
         margin-top: 0.3rem !important;
     }
-    
-    /* Headers and text */
+
+    /* Typography Scale */
     h1 {
-        color: #00ff00 !important;
-        font-size: 2.5rem !important;
+        font-size: var(--fluid-text-2xl) !important;
+        color: var(--primary-color) !important;
         font-weight: bold !important;
         text-shadow: 0 0 15px rgba(0,255,0,0.3) !important;
+        margin-bottom: var(--spacing-unit) !important;
     }
-    
+
     h2, h3 {
-        color: #00ffff !important;
+        font-size: var(--fluid-text-xl) !important;
+        color: var(--secondary-color) !important;
         font-weight: bold !important;
         text-shadow: 0 0 10px rgba(0,255,255,0.3) !important;
+        margin-bottom: calc(var(--spacing-unit) * 0.75) !important;
     }
-    
+
     h4, h5, h6 {
-        color: #ff9900 !important;
+        font-size: var(--fluid-text-lg) !important;
+        color: var(--accent-color) !important;
         font-weight: bold !important;
+        margin-bottom: calc(var(--spacing-unit) * 0.5) !important;
     }
-    
+
     p, label {
-        color: #ffffff !important;
-        font-size: 1.1rem !important;
+        font-size: var(--fluid-text-base) !important;
+        color: var(--text-light) !important;
+        line-height: 1.5;
     }
-    
-    /* Selectbox styling */
+
+    /* Interactive Elements */
     .stSelectbox > div > div {
         background-color: rgba(0, 0, 0, 0.5) !important;
         border: 1px solid rgba(0, 255, 0, 0.3) !important;
-        color: #00ff00 !important;
-        font-weight: 500 !important;
+        color: var(--primary-color) !important;
+        font-size: var(--fluid-text-base) !important;
+        padding: calc(var(--spacing-unit) * 0.5) !important;
     }
-    
-    .stSelectbox label {
-        color: #00ff00 !important;
-        font-weight: 600 !important;
-        font-size: 1.1rem !important;
+
+    .stFileUploader {
+        background-color: rgba(0, 0, 0, 0.5) !important;
+        border: 2px dashed var(--primary-color) !important;
+        padding: var(--spacing-unit) !important;
+        border-radius: 0.5rem !important;
+        transition: border-color 0.2s ease;
     }
-    
-    /* Warning messages with improved visibility */
+
+    .stFileUploader:hover {
+        border-color: var(--secondary-color) !important;
+    }
+
+    /* Data Display */
+    .stDataFrame {
+        container-type: inline-size;
+        background-color: rgba(0, 0, 0, 0.5) !important;
+        border-radius: 0.5rem;
+        overflow: auto;
+    }
+
+    .dataframe {
+        color: var(--text-light) !important;
+        font-size: var(--fluid-text-sm) !important;
+    }
+
+    /* Charts and Visualizations */
+    .js-plotly-plot {
+        container-type: inline-size;
+        width: 100% !important;
+    }
+
+    @container (max-width: 480px) {
+        .js-plotly-plot {
+            height: auto !important;
+            min-height: 300px;
+        }
+    }
+
+    /* Warning Messages */
     .stAlert {
         background-color: rgba(255, 193, 7, 0.2) !important;
         color: #ffd700 !important;
         border: 1px solid rgba(255, 193, 7, 0.5) !important;
-        padding: 1rem !important;
+        padding: var(--spacing-unit) !important;
         border-radius: 0.5rem !important;
-        font-weight: 500 !important;
+        font-size: var(--fluid-text-base) !important;
+        margin: var(--spacing-unit) 0 !important;
     }
-    
-    /* File uploader styling */
-    .stFileUploader {
-        background-color: rgba(0, 0, 0, 0.5) !important;
-        border: 2px dashed #00ff00 !important;
-        padding: 1rem !important;
-        border-radius: 0.5rem !important;
+
+    /* Mobile-First Media Queries */
+    @media screen and (max-width: 640px) {
+        .stColumns {
+            grid-template-columns: 1fr !important;
+        }
+        
+        .stMetric {
+            margin-bottom: var(--spacing-unit) !important;
+        }
     }
-    
-    /* Table styling */
-    .stDataFrame {
-        background-color: rgba(0, 0, 0, 0.5) !important;
+
+    @media screen and (min-width: 641px) and (max-width: 1024px) {
+        .stColumns {
+            grid-template-columns: repeat(2, 1fr) !important;
+        }
     }
-    
-    .dataframe {
-        color: #ffffff !important;
-        font-size: 1rem !important;
-    }
-    
-    /* Dark theme overrides */
+
+    /* Dark Theme Overrides */
     [data-testid="stAppViewContainer"] {
-        background-color: #0E1117 !important;
+        background-color: var(--background-dark) !important;
     }
-    
+
     [data-testid="stHeader"] {
         background-color: rgba(0, 0, 0, 0.3) !important;
+    }
+
+    /* Print Media Query */
+    @media print {
+        .stMetric {
+            break-inside: avoid;
+            page-break-inside: avoid;
+        }
+        
+        .js-plotly-plot {
+            break-inside: avoid;
+            page-break-inside: avoid;
+        }
     }
     </style>
 """, unsafe_allow_html=True)
@@ -509,15 +599,22 @@ def format_improvement_rate(rate):
 
 def main():
     st.title("🏃 Advanced Race Results Analyzer")
-    st.write("Upload a file with runner names or enter names directly for comprehensive race analysis")
-
-    col1, col2 = st.columns([2, 1])
     
-    with col1:
-        uploaded_file = st.file_uploader("Upload a file with runner names (TXT or CSV)", type=['txt', 'csv'])
-    
-    with col2:
-        manual_input = st.text_input("Or enter a runner's name directly:")
+    # Responsive layout for input section
+    input_container = st.container()
+    with input_container:
+        left_col, right_col = st.columns([2, 1])
+        with left_col:
+            uploaded_file = st.file_uploader(
+                "Upload a file with runner names (TXT or CSV)", 
+                type=['txt', 'csv'],
+                help="Upload a text file or CSV containing runner names"
+            )
+        with right_col:
+            manual_input = st.text_input(
+                "Or enter a runner's name",
+                placeholder="Enter name here..."
+            )
     
     runner_names = []
     
@@ -569,34 +666,72 @@ def main():
                     advanced_stats = calculate_advanced_stats(df_distance)
                     
                     # Display metrics in columns
-                    col1, col2, col3, col4 = st.columns(4)
-                    with col1:
-                        st.metric("🏃 Best Time", format_time(analysis['best_time']))
-                    with col2:
-                        st.metric("⚡ Best Pace", format_time(analysis['best_pace']))
-                    with col3:
-                        st.metric("🎯 Total Races", f"{analysis['total_races']}")
-                    with col4:
-                        consistency = advanced_stats['consistency_score']
-                        st.metric("📊 Consistency Score", f"{consistency:.1f}%")
+                    metrics_container = st.container()
+                    with metrics_container:
+                        cols = st.columns(4)
+                        with cols[0]:
+                            st.metric(
+                                "🏃 Best Time",
+                                format_time(analysis['best_time']),
+                                help="Best time achieved in this distance"
+                            )
+                        with cols[1]:
+                            st.metric(
+                                "⚡ Best Pace",
+                                format_time(analysis['best_pace']),
+                                help="Best pace achieved in this distance"
+                            )
+                        with cols[2]:
+                            st.metric(
+                                "🎯 Total Races",
+                                f"{analysis['total_races']}",
+                                help="Total races run in this distance"
+                            )
+                        with cols[3]:
+                            consistency = advanced_stats['consistency_score']
+                            st.metric(
+                                "📊 Consistency Score",
+                                f"{consistency:.1f}%",
+                                help="Consistency of performance in this distance"
+                            )
                     
                     # Additional metrics row
-                    col1, col2, col3, col4 = st.columns(4)
-                    with col1:
-                        st.metric("🏆 Best Position", f"#{advanced_stats['best_position']}")
-                    with col2:
-                        st.metric("📈 Average Position", f"#{advanced_stats['avg_position']:.0f}")
-                    with col3:
+                    cols = st.columns(4)
+                    with cols[0]:
+                        st.metric(
+                            "🏆 Best Position",
+                            f"#{advanced_stats['best_position']}",
+                            help="Best position achieved in this distance"
+                        )
+                    with cols[1]:
+                        st.metric(
+                            "📈 Average Position",
+                            f"#{advanced_stats['avg_position']:.0f}",
+                            help="Average position achieved in this distance"
+                        )
+                    with cols[2]:
                         improvement_rate = advanced_stats['improvement_rate']
-                        st.metric("💪 Improvement Rate", 
-                                f"{abs(improvement_rate):.1f}%",
-                                delta=("Improving" if improvement_rate > 0 else "Declining"))
-                    with col4:
-                        st.metric("📏 Standard Deviation", f"{advanced_stats['std_dev']:.1f}s")
+                        st.metric(
+                            "💪 Improvement Rate",
+                            f"{abs(improvement_rate):.1f}%",
+                            delta=("Improving" if improvement_rate > 0 else "Declining"),
+                            help="Rate of improvement or decline in this distance"
+                        )
+                    with cols[3]:
+                        st.metric(
+                            "📏 Standard Deviation",
+                            f"{advanced_stats['std_dev']:.1f}s",
+                            help="Standard deviation of times in this distance"
+                        )
                     
-                    # Create and display performance dashboard
-                    st.plotly_chart(create_performance_dashboard(df_distance, advanced_stats),
-                                  use_container_width=True)
+                    # Charts in responsive container
+                    chart_container = st.container()
+                    with chart_container:
+                        st.plotly_chart(
+                            create_performance_dashboard(df_distance, advanced_stats),
+                            use_container_width=True,
+                            config={'responsive': True}
+                        )
                     
                     # Season Bests Analysis
                     st.markdown("#### 🏆 Season Bests")
@@ -612,8 +747,8 @@ def main():
                     df_display = pd.DataFrame(df_distance)
                     
                     # Add export buttons
-                    col1, col2 = st.columns(2)
-                    with col1:
+                    cols = st.columns(2)
+                    with cols[0]:
                         csv = df_display.to_csv(index=False)
                         st.download_button(
                             "📥 Download CSV",
@@ -623,7 +758,7 @@ def main():
                             key=f'download_csv_{name}'
                         )
                     
-                    with col2:
+                    with cols[1]:
                         excel_buffer = io.BytesIO()
                         df_display.to_excel(excel_buffer, index=False)
                         excel_data = excel_buffer.getvalue()
