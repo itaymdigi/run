@@ -448,15 +448,24 @@ def create_performance_dashboard(df_distance, stats):
                 colorscale='Viridis',
                 showscale=True,
                 colorbar=dict(
-                    title='Time',
-                    titleside='right',
-                    titlefont=dict(color='white'),
-                    tickfont=dict(color='white')
+                    title=dict(
+                        text='Time',
+                        side='right',
+                        font=dict(color='white')
+                    ),
+                    tickfont=dict(color='white'),
+                    bgcolor='rgba(0,0,0,0)',
+                    bordercolor='rgba(255,255,255,0.3)',
+                    outlinewidth=1
                 )
             )
         ),
         row=2, col=2
     )
+    
+    # Update subplot titles color
+    for annotation in fig.layout.annotations:
+        annotation.font.color = 'white'
     
     return fig
 
